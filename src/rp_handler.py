@@ -1,7 +1,8 @@
 '''
 Contains the handler function that will be called by the serverless.
 '''
-
+import base64
+from io import BytesIO
 import os
 import torch
 from diffusers import StableDiffusionXLPipeline, StableDiffusionXLImg2ImgPipeline
@@ -28,15 +29,18 @@ refiner.enable_xformers_memory_efficient_attention()
 
 
 def _save_and_upload_images(images, job_id):
-    os.makedirs(f"/{job_id}", exist_ok=True)
+    # os.makedirs(f"/{job_id}", exist_ok=True)
     image_urls = []
     for index, image in enumerate(images):
-        image_path = os.path.join(f"/{job_id}", f"{index}.png")
-        image.save(image_path)
+        # image_path = os.path.join(f"/{job_id}", f"{index}.png")
+        # image.save(image_path)
 
-        image_url = rp_upload.upload_image(job_id, image_path)
+        # image_url = rp_upload.upload_image(job_id, image_path)
+        buffered = BytesIO()
+        image.save(buffered, format="JPEG")
+        image_url = base64.b64encode(buffered.getvalue())
         image_urls.append(image_url)
-    rp_cleanup.clean([f"/{job_id}"])
+    # rp_cleanup.clean([f"/{job_id}"])
     return image_urls
 
 
