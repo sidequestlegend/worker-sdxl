@@ -9,7 +9,7 @@ from diffusers import StableDiffusionXLPipeline, StableDiffusionXLImg2ImgPipelin
 from diffusers.utils import load_image
 
 import runpod
-from runpod.serverless.utils import rp_upload, rp_cleanup
+# from runpod.serverless.utils import rp_upload, rp_cleanup
 from runpod.serverless.utils.rp_validator import validate
 
 from rp_schemas import INPUT_SCHEMA
@@ -38,7 +38,7 @@ def _save_and_upload_images(images, job_id):
         # image_url = rp_upload.upload_image(job_id, image_path)
         buffered = BytesIO()
         image.save(buffered, format="JPEG")
-        image_url = base64.b64encode(buffered.getvalue())
+        image_url = base64.b64encode(buffered.getvalue()).decode("utf-8")
         image_urls.append(image_url)
     # rp_cleanup.clean([f"/{job_id}"])
     return image_urls
